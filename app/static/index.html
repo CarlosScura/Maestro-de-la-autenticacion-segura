@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PassPort Inc.</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <!-- JS y CSS van en archivos aparte: el CSP "default-src 'self'" bloquea código inline. -->
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>PassPort Inc.</h1>
+    <p id="estado-sesion" class="estado">No autenticado</p>
+  </header>
+
+  <main>
+    <section class="tarjeta">
+      <h2>Registro</h2>
+      <form id="form-registro">
+        <label>Nombre <input name="nombre" required maxlength="120" autocomplete="name"></label>
+        <label>Email <input name="email" type="email" required autocomplete="email"></label>
+        <label>Contraseña <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+        <button type="submit">Registrarme</button>
+      </form>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Login</h2>
+      <form id="form-login">
+        <label>Email <input name="email" type="email" required autocomplete="email"></label>
+        <label>Contraseña <input name="password" type="password" required autocomplete="current-password"></label>
+        <label>Método
+          <select name="metodo">
+            <option value="cookie">Cookie de sesión</option>
+            <option value="jwt">JWT (Bearer token)</option>
+          </select>
+        </label>
+        <button type="submit">Iniciar sesión</button>
+      </form>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Acciones</h2>
+      <div class="botones">
+        <button id="btn-perfil" type="button">Ver perfil</button>
+        <button id="btn-admin" type="button">Listar usuarios (admin)</button>
+        <button id="btn-logout" type="button" class="secundario">Logout</button>
+      </div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Resultado</h2>
+      <pre id="resultado">—</pre>
+    </section>
+  </main>
+</body>
+</html>

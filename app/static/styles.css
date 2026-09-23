@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f4f5f7;
+  color: #1f2328;
+  line-height: 1.5;
+}
+
+header {
+  background: #1f3a5f;
+  color: #fff;
+  padding: 1rem 1.5rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.estado {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+main {
+  max-width: 760px;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.tarjeta {
+  background: #fff;
+  border: 1px solid #d8dde3;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.tarjeta h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input,
+select {
+  font: inherit;
+  font-weight: 400;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #b8c0ca;
+  border-radius: 6px;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid #3b6fb6;
+  outline-offset: 1px;
+}
+
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #2f5f9e;
+  color: #fff;
+  cursor: pointer;
+  justify-self: start;
+}
+
+button:hover {
+  background: #244b7e;
+}
+
+button.secundario {
+  background: #6b7480;
+}
+
+button.secundario:hover {
+  background: #555d68;
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+pre {
+  margin: 0;
+  padding: 0.75rem;
+  background: #f0f2f5;
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.85rem;
+}
+
+pre.error {
+  background: #fdecec;
+  color: #8a1c1c;
+}
