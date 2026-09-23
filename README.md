@@ -37,8 +37,34 @@ administrador de prueba hay que actualizar esa fila a mano en la base:
 UPDATE usuarios SET rol = 'administrador' WHERE email = 'tu-email@ejemplo.com';
 ```
 
-### Alcance de esta primera versión
+### Interfaz
 
-Sin interfaz gráfica, sin tests automatizados, sin recuperación de contraseña por email y
-sin Docker (se corre localmente) — ver el detalle de requerimientos y las decisiones de
-diseño en [prompt-challenge10.md](prompt-challenge10.md).
+Con el servidor levantado, abrir `http://localhost:8000/`. Permite registrarse, loguearse
+por cookie o por JWT, ver el perfil, listar usuarios (solo admin) y hacer logout, sin usar
+`curl`. Está hecha con HTML, CSS y JS sin frameworks en `app/static/`. El JS se encarga de
+copiar la cookie `csrf_token` al header `X-CSRF-Token` en el logout (patrón double submit
+cookie) y de mandar el JWT en `Authorization: Bearer`.
+
+### Tests
+
+Usan una base PostgreSQL separada (`passport_test_db` por defecto, en el mismo servidor y
+con el mismo usuario que `DATABASE_URL`). Cada test borra y recrea sus tablas, así que
+**nunca** debe apuntar a la base de desarrollo (el `conftest.py` lo impide).
+
+1. Crear la base una sola vez (con el usuario dueño de la base de desarrollo):
+   ```bash
+   createdb -O <tu_usuario> passport_test_db
+   ```
+2. Instalar las dependencias de desarrollo y correr:
+   ```bash
+   pip install -r requirements-dev.txt
+   pytest
+   ```
+
+Para usar otra base, definir `TEST_DATABASE_URL` (en el entorno o en `.env`).
+
+### Alcance
+
+Sin recuperación de contraseña por email y sin Docker (se corre localmente). Ver el detalle
+de requerimientos en [prompt-challenge10.md](prompt-challenge10.md) y
+[prompt-challenge10-2.md](prompt-challenge10-2.md).
