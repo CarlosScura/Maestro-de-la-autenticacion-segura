@@ -15,17 +15,13 @@ from app import models
 MINUTOS_EXPIRACION_SESION = int(os.getenv("SESSION_EXPIRE_MINUTES", "60"))
 NOMBRE_COOKIE_SESION = "session_id"
 
-# Secure=True exige HTTPS (los navegadores tratan "localhost" como contexto seguro incluso
-# por HTTP, así que esto no rompe el desarrollo local). Se puede desactivar con
-# COOKIE_SECURE=false en .env únicamente para pruebas puntuales con curl sobre HTTP plano
-# en una IP que no sea localhost; el requerimiento de seguridad pide Secure por defecto.
+# Secure=True exige HTTPS.
 _COOKIE_SECURE = os.getenv("COOKIE_SECURE", "true").lower() == "true"
 
 
 def _asegurar_utc(momento: datetime) -> datetime:
     # Postgres (TIMESTAMPTZ) devuelve datetimes con tzinfo; algunos backends usados en
-    # pruebas locales (SQLite) los devuelven "naive" al releerlos de la base. Sin esto, la
-    # comparación de más abajo puede tirar un TypeError según qué motor se esté usando.
+    # pruebas locales (SQLite) los devuelven "naive" al releerlos de la base.
     if momento.tzinfo is None:
         return momento.replace(tzinfo=timezone.utc)
     return momento
@@ -33,13 +29,7 @@ def _asegurar_utc(momento: datetime) -> datetime:
 
 def _hashear_token(token: str) -> str:
     """
-    Guardamos en la base el hash SHA-256 del token de sesión, no el token en texto plano.
-    No es lo mismo que hashear una contraseña: el token ya tiene 256 bits de entropía
-    aleatoria (no es algo que un atacante pueda adivinar por fuerza bruta ni por diccionario),
-    así que no hace falta un algoritmo lento como bcrypt acá. Lo que buscamos es otra cosa:
-    que si alguien accede de solo lectura a la base de datos (un backup filtrado, una
-    inyección SQL de lectura, etc.) no pueda usar directamente esas filas como cookies
-    válidas para suplantar sesiones activas.
+    Guardamos en la base el hash SHA-256 del token de sesión.
     """
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
@@ -88,10 +78,9 @@ def setear_cookie_sesion(response: Response, token: str) -> None:
     response.set_cookie(
         key=NOMBRE_COOKIE_SESION,
         value=token,
-        httponly=True,  # inaccesible desde JavaScript: mitiga robo de la cookie vía XSS
+        httponly=True,  # inaccesible desde JavaScript
         secure=_COOKIE_SECURE,  # nunca viaja por HTTP sin cifrar
-        samesite="lax",  # no se envía en requests cross-site de terceros (mitiga CSRF básico),
-        # pero sí en navegación normal del usuario (a diferencia de "strict")
+        samesite="lax",  # no se envía en requests cross-site de terceros
         max_age=MINUTOS_EXPIRACION_SESION * 60,
         path="/",
     )

@@ -1,9 +1,6 @@
 """
 Bloqueo progresivo tras intentos fallidos de login.
 
-Un bloqueo fijo (ej: "3 intentos y bloqueado 5 minutos siempre") es fácil de eludir con
-paciencia; un bloqueo progresivo hace cada vez más costoso seguir probando contraseñas,
-sin bloquear permanentemente a un usuario legítimo que se equivocó un par de veces.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -24,7 +21,7 @@ _VENTANA_DE_CONTEO = timedelta(hours=1)
 
 
 def _asegurar_utc(momento: datetime) -> datetime:
-    # Mismo motivo que en core/sessions.py: algunos backends (SQLite en pruebas locales)
+    # Algunos backends (SQLite en pruebas locales)
     # devuelven datetimes "naive" al releerlos, aunque Postgres los devuelva con tzinfo.
     if momento.tzinfo is None:
         return momento.replace(tzinfo=timezone.utc)
@@ -41,8 +38,8 @@ def _duracion_bloqueo_para(cantidad_de_fallos: int) -> timedelta | None:
 
 def verificar_bloqueo(db: Session, email: str) -> None:
     """
-    Se llama ANTES de intentar validar la contraseña. Si el email está bloqueado por
-    demasiados fallos recientes, corta acá con 429 y no llega ni a consultar el hash.
+    Si el email está bloqueado por
+    demasiados fallos recientes, corta y no llega ni a consultar el hash.
     """
     desde = datetime.now(timezone.utc) - _VENTANA_DE_CONTEO
     intentos_recientes = (
