@@ -35,17 +35,11 @@ class UsuarioRegistro(BaseModel):
     @field_validator("email")
     @classmethod
     def _normalizar_email(cls, v: str) -> str:
-        # Normalizamos a minúsculas para que "Ana@Mail.com" y "ana@mail.com" no puedan
-        # registrarse como dos cuentas distintas.
         return v.lower()
 
     @field_validator("password")
     @classmethod
     def _validar_longitud_para_bcrypt(cls, v: str) -> str:
-        # bcrypt solo procesa los primeros 72 bytes de la contraseña; si se la dejara pasar
-        # más larga, la librería la truncaría en silencio y dos contraseñas distintas que
-        # compartan esos primeros 72 bytes generarían el mismo hash. Preferimos rechazar
-        # explícitamente antes que aceptar ese comportamiento sorpresivo.
         if len(v.encode("utf-8")) > 72:
             raise ValueError("La contraseña no puede superar los 72 bytes (límite de bcrypt)")
         return v
@@ -64,8 +58,7 @@ class UsuarioOut(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
-    # El usuario elige explícitamente la estrategia en el momento del login; esta elección
-    # no se persiste en ningún lado, es solo una instrucción de "qué devolver ahora".
+    # El usuario elige explícitamente la estrategia en el momento del login.
     metodo: Literal["cookie", "jwt"]
 
     @field_validator("email")

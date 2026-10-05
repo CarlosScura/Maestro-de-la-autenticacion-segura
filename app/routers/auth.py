@@ -85,10 +85,7 @@ def cerrar_sesion(
     usuario_actual: models.Usuario = Depends(obtener_usuario_actual),
 ):
     # Si el usuario se autenticó con cookie, hay una sesión en la base para invalidar.
-    # Si se autenticó con JWT, el logout es "stateless": no hay nada que borrar del lado del
-    # servidor (el token sigue siendo técnicamente válido hasta que expira por sí solo); el
-    # cliente simplemente debe descartarlo. Implementar una lista negra de JWT queda fuera
-    # del alcance de esta primera versión.
+    # Si se autenticó con JWT, el logout es "stateless"
     token_sesion = request.cookies.get(NOMBRE_COOKIE_SESION)
     if token_sesion:
         eliminar_sesion(db, token_sesion)

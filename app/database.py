@@ -16,15 +16,12 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 load_dotenv()
 
-# Valor por defecto solo para que el proyecto arranque "out of the box" en desarrollo local;
-# en cualquier entorno real esto se debe sobreescribir con una variable de entorno propia.
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg://passport_user:passport_pass@localhost:5432/passport_db",
 )
 
-# pool_pre_ping evita usar conexiones "muertas" del pool (por ejemplo, si Postgres se
-# reinició y la conexión quedó colgada) devolviendo un error claro en vez de uno críptico.
+# pool_pre_ping evita usar conexiones "muertas" del pool.
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

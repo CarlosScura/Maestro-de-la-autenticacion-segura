@@ -33,8 +33,7 @@ class Usuario(Base):
     nombre: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
 
-    # Los hashes de bcrypt tienen siempre 60 caracteres en su representación de texto
-    # (formato "$2b$<costo>$<22 chars de salt><31 chars de hash>"); nunca se guarda la
+    # Los hashes de bcrypt tienen siempre 60 caracteres; nunca se guarda la
     # contraseña en texto plano ni siquiera temporalmente en esta tabla.
     password_hash: Mapped[str] = mapped_column(String(60), nullable=False)
 

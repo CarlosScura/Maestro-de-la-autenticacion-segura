@@ -11,18 +11,17 @@
  *     Authorization: Bearer <token>.
  */
 
+
+// Duplicamos las mismas variables que en csrf.py para mantener la simplicidad del proyecto.
 const NOMBRE_COOKIE_CSRF = "csrf_token";
 const NOMBRE_HEADER_CSRF = "X-CSRF-Token";
 
-// El JWT se guarda solo en memoria (no en localStorage ni sessionStorage) a propósito: si
-// algún día se colara un XSS, el script inyectado no encontraría el token en ningún storage
-// persistente, y el token desaparece al cerrar o recargar la pestaña. La contra es que al
-// recargar hay que volver a loguearse, algo aceptable para una interfaz de prueba.
+// El JWT se guarda solo en memoria, si se coluela un XSS, el script no encontraría el token.
 let tokenJwt = null;
 
 function leerCookie(nombre) {
-  // document.cookie solo expone las cookies SIN HttpOnly: csrf_token es visible (debe
-  // serlo para que el patrón funcione), session_id no (el JS nunca puede robarla).
+  // document.cookie solo expone las cookies SIN HttpOnly,
+  // session_id no (el JS nunca puede robarla).
   for (const par of document.cookie.split("; ")) {
     const [clave, ...resto] = par.split("=");
     if (clave === nombre) {
@@ -44,8 +43,7 @@ function construirHeaders({ conCsrf = false, conJson = false } = {}) {
     // Este es el fix del 403 en /auth/logout: el navegador manda la cookie csrf_token solo,
     // pero el servidor exige que el MISMO valor llegue también en un header. Un sitio
     // atacante puede lograr que el navegador envíe la cookie, pero no puede leerla (política
-    // de mismo origen), así que no puede armar este header. Nosotros sí, porque esta página
-    // se sirve desde el mismo origen que la API.
+    // de mismo origen), así que no puede armar este header.
     // Con JWT el backend ignora el CSRF (el header Authorization no se envía solo en
     // requests cross-site), pero mandarlo igual no molesta si hay cookie.
     const tokenCsrf = leerCookie(NOMBRE_COOKIE_CSRF);
@@ -111,17 +109,14 @@ async function iniciarSesion(evento) {
   evento.preventDefault();
   const datos = datosDelFormulario(evento.target);
 
-  // Se descarta cualquier JWT previo antes de loguear: si quedara, el header Authorization
-  // tendría prioridad en el backend y un nuevo login por cookie no se "vería".
+  // Se descarta cualquier JWT previo antes de loguear.
   tokenJwt = null;
 
   const resultado = await llamarApi("POST", "/auth/login", { cuerpo: datos });
   if (resultado.ok && datos.metodo === "jwt") {
     tokenJwt = resultado.datos.access_token;
   }
-  // Con método cookie no hay nada que guardar a mano: el Set-Cookie de la respuesta ya dejó
-  // session_id (HttpOnly) y csrf_token en el navegador, y leerCookie() toma este último
-  // cuando haga falta.
+  // Con método cookie no hay nada que guardar a mano.
 
   mostrarResultado("Login", resultado);
   actualizarEstado();
@@ -143,8 +138,7 @@ async function listarUsuarios() {
 async function cerrarSesion() {
   const resultado = await llamarApi("POST", "/auth/logout", { conCsrf: true });
   if (resultado.ok) {
-    // Con JWT el logout del servidor no guarda estado: el token seguiría siendo válido hasta
-    // expirar, así que "cerrar sesión" en el cliente significa olvidarlo.
+    // Con JWT el logout del servidor no guarda estado.
     tokenJwt = null;
   }
   mostrarResultado("Logout", resultado);

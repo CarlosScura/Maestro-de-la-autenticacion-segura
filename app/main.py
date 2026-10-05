@@ -14,9 +14,7 @@ from app.routers import auth
 
 Base.metadata.create_all(bind=engine)
 
-# La interfaz se sirve desde la misma app (mismo origen que la API): así la cookie de sesión
-# viaja sola en cada fetch, el JS puede leer la cookie csrf_token, y el CSP "default-src 'self'"
-# permite cargar app.js y styles.css sin tener que aflojar ninguna cabecera de seguridad.
+# La interfaz se sirve desde la misma app: así la cookie de sesión viaja sola en cada fetch
 DIRECTORIO_STATIC = Path(__file__).parent / "static"
 
 app = FastAPI(title="PassPort Inc. — Sistema de Gestión de Sesiones y Autenticación")
